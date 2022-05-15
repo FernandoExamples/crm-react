@@ -1,35 +1,28 @@
-import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Formik, Form, Field } from 'formik'
 import * as yup from 'yup'
+import * as ClientService from '../services/clients.service'
 import Error from './Error'
 
 function Formulario() {
   const validationSchema = yup.object().shape({
-    nombre: yup
-      .string()
-      .required('El nombre del Cliente es obligatorio')
-      .min(3, 'El nombre es muy corto'),
+    nombre: yup.string().required('El nombre del Cliente es obligatorio').min(3, 'El nombre es muy corto'),
     empresa: yup.string().required('El nombre de la empresa es obligatorio'),
-    email: yup
-      .string()
-      .required('El email es obligatorio')
-      .email('El email es inválido'),
-    telefono: yup
-      .number()
-      .positive('Número no válido')
-      .integer('Número no válido')
-      .typeError('El número no es válido'),
+    email: yup.string().required('El email es obligatorio').email('El email es inválido'),
+    telefono: yup.number().positive('Número no válido').integer('Número no válido').typeError('El número no es válido'),
   })
 
-  const handleSubmit = (values) => {
-    console.log(values)
+  const handleSubmit = async (values, { resetForm }) => {
+    const client = { ...values }
+    client.id = Date.now()
+    const newClient = await ClientService.addClient(client)
+    console.log(newClient)
+    resetForm()
   }
 
   return (
     <div className='bg-white mt-10 px-5 py-10 rounded-md shadow-md md:w-3/4 mx-auto'>
-      <h1 className='text-gray-600 font-bold text-center text-xl uppercase'>
-        Agregar Cliente
-      </h1>
+      <h1 className='text-gray-600 font-bold text-center text-xl uppercase'>Agregar Cliente</h1>
 
       <Formik
         initialValues={{
@@ -56,9 +49,7 @@ function Formulario() {
                   placeholder='Nombre del Cliente'
                   name='nombre'
                 ></Field>
-                {errors.nombre && touched.nombre && (
-                  <Error message={errors.nombre} />
-                )}
+                {errors.nombre && touched.nombre && <Error message={errors.nombre} />}
               </div>
 
               <div className='mb-4'>
@@ -72,9 +63,7 @@ function Formulario() {
                   placeholder='Empresa del Cliente'
                   name='empresa'
                 ></Field>
-                {errors.empresa && touched.empresa && (
-                  <Error message={errors.empresa} />
-                )}
+                {errors.empresa && touched.empresa && <Error message={errors.empresa} />}
               </div>
 
               <div className='mb-4'>
@@ -88,9 +77,7 @@ function Formulario() {
                   placeholder='Email del Cliente'
                   name='email'
                 ></Field>
-                {errors.email && touched.email && (
-                  <Error message={errors.email} />
-                )}
+                {errors.email && touched.email && <Error message={errors.email} />}
               </div>
 
               <div className='mb-4'>
@@ -104,9 +91,7 @@ function Formulario() {
                   placeholder='Teléfono del Cliente'
                   name='telefono'
                 ></Field>
-                {errors.telefono && touched.telefono && (
-                  <Error message={errors.telefono} />
-                )}
+                {errors.telefono && touched.telefono && <Error message={errors.telefono} />}
               </div>
 
               <div className='mb-4'>
@@ -118,7 +103,7 @@ function Formulario() {
                   type='text'
                   className='mt-2 block w-full p-3 bg-gray-50 h-40'
                   id='notas'
-                  placeholder='Notasl del cliente'
+                  placeholder='Notas del cliente'
                   name='notas'
                 ></Field>
               </div>
