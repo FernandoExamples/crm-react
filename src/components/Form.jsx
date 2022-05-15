@@ -5,6 +5,9 @@ import * as ClientService from '../services/clients.service'
 import Error from './Error'
 
 function Formulario() {
+
+  const navigate = useNavigate()
+  
   const validationSchema = yup.object().shape({
     nombre: yup.string().required('El nombre del Cliente es obligatorio').min(3, 'El nombre es muy corto'),
     empresa: yup.string().required('El nombre de la empresa es obligatorio'),
@@ -18,6 +21,7 @@ function Formulario() {
     const newClient = await ClientService.addClient(client)
     console.log(newClient)
     resetForm()
+    navigate('/clients')
   }
 
   return (

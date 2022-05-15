@@ -8,3 +8,12 @@ export async function addClient(client) {
     console.log(error)
   }
 }
+
+export async function fetchClients() {
+  try {
+    const resp = await axios.get('/clientes')
+    return resp.data
+  } catch (error) {
+    console.log(error)
+  }
+}
