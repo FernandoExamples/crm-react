@@ -4,7 +4,7 @@ import * as yup from 'yup'
 import * as ClientService from '../services/clients.service'
 import Error from './Error'
 
-function Formulario() {
+function FormularioEditar({ cliente }) {
   const navigate = useNavigate()
 
   const validationSchema = yup.object().shape({
@@ -16,23 +16,22 @@ function Formulario() {
 
   const handleSubmit = async (values, { resetForm }) => {
     const client = { ...values }
-    client.id = Date.now()
-    const newClient = await ClientService.addClient(client)
+    const newClient = await ClientService.updateClient(cliente.id, client)
     resetForm()
     navigate('/clients')
   }
 
   return (
     <div className='bg-white mt-10 px-5 py-10 rounded-md shadow-md md:w-3/4 mx-auto'>
-      <h1 className='text-gray-600 font-bold text-center text-xl uppercase'>Agregar Cliente</h1>
+      <h1 className='text-gray-600 font-bold text-center text-xl uppercase'>Editar Cliente</h1>
 
       <Formik
         initialValues={{
-          nombre: '',
-          empresa: '',
-          email: '',
-          telefono: '',
-          notas: '',
+          nombre: cliente.nombre,
+          empresa: cliente.empresa,
+          email: cliente.email,
+          telefono: cliente.telefono,
+          notas: cliente.notas,
         }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
@@ -112,7 +111,7 @@ function Formulario() {
 
               <input
                 type='submit'
-                value='Agregar Cliente'
+                value='Editar Cliente'
                 className='mt-5 w-full bg-blue-800 p-3 text-white uppercase font-bold text-lg'
               />
             </Form>
@@ -123,4 +122,4 @@ function Formulario() {
   )
 }
 
-export default Formulario
+export default FormularioEditar
