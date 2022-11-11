@@ -1,13 +1,24 @@
-import { useNavigate, Form, ActionFunction } from 'react-router-dom'
+import { Error } from '@/components/Error'
+import { useNavigate, Form, ActionFunction, useActionData } from 'react-router-dom'
 import { Formulario } from './Formulario'
 
 export const FormAction: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
+  let regex = new RegExp(
+    "([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(.[!#-'*+/-9=?A-Z^-~-]+)*|[[\t -Z^-~]*])"
+  )
+
+  const errors = []
+  if (Object.values(data).includes('')) errors.push('Todos los campos son obligatorios')
+  if (!regex.test(data.email.toString())) errors.push('El email no es válido')
+
+  if (errors.length > 0) return errors
 }
 
 export const NuevoCliente = () => {
   const navigate = useNavigate()
+  const errors = useActionData() as string[]
 
   return (
     <>
@@ -21,7 +32,9 @@ export const NuevoCliente = () => {
       </div>
 
       <div className="bg-white shadow rounded-md md:w-3/4 mx-auto px-5 py-10 mt-12">
-        <Form method="post">
+        {errors && errors.map((item, i) => <Error key={i}>{item}</Error>)}
+
+        <Form method="post" noValidate>
           <Formulario />
 
           <input

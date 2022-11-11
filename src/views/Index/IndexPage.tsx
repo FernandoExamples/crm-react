@@ -1,46 +1,12 @@
 import { Cliente } from '@/entities/Cliente'
+import axios from '@/network/axios'
 import { LoaderFunction, useLoaderData } from 'react-router-dom'
 import { ClientRow } from './ClientRow'
 
-export const IndexLoader: LoaderFunction = () => {
-  const clientes = [
-    {
-      id: 1,
-      nombre: 'Juan',
-      telefono: 102013313,
-      email: 'juan@juan.com',
-      empresa: 'Codigo Con Juan',
-    },
-    {
-      id: 2,
-      nombre: 'Karen',
-      telefono: 138198313,
-      email: 'karen@juan.com',
-      empresa: 'Codigo Con Juan',
-    },
-    {
-      id: 3,
-      nombre: 'Josue',
-      telefono: 31983913,
-      email: 'josue@juan.com',
-      empresa: 'Codigo Con Juan',
-    },
-    {
-      id: 4,
-      nombre: 'Miguel',
-      telefono: 319381983,
-      email: 'miguel@juan.com',
-      empresa: 'Codigo Con Juan',
-    },
-    {
-      id: 5,
-      nombre: 'Pedro',
-      telefono: 1398198938,
-      email: 'pedro@juan.com',
-      empresa: 'Codigo Con Juan',
-    },
-  ]
-
+export const IndexLoader: LoaderFunction = async () => {
+  const resp = await axios.get('/clients')
+  const clientes = resp.data
+  
   return clientes
 }
 
