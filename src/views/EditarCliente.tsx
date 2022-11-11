@@ -1,8 +1,16 @@
+import axios from '@/network/axios'
+import { ActionFunction, Form, LoaderFunction, redirect, useActionData, useLoaderData, useNavigate } from 'react-router-dom';
+import { Cliente } from '@/entities/Cliente'
+import { Formulario } from '@/components/Formulario'
 import { Error } from '@/components/Error'
-import { useNavigate, Form, ActionFunction, useActionData } from 'react-router-dom'
-import { Formulario } from './Formulario'
 
-export const FormAction: ActionFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({ params }) => {
+  const resp = await axios.get(`/clients/${params.id}`)
+
+  return resp.data
+}
+
+export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
   let regex = new RegExp(
@@ -14,16 +22,21 @@ export const FormAction: ActionFunction = async ({ request }) => {
   if (!regex.test(data.email.toString())) errors.push('El email no es válido')
 
   if (errors.length > 0) return errors
+
+  await axios.put(`/clients/${params.id}`, data)
+
+  return redirect('/')
 }
 
-export const NuevoCliente = () => {
-  const navigate = useNavigate()
+export const EditarCliente = () => {
+  const cliente = useLoaderData() as Cliente
   const errors = useActionData() as string[]
+  const navigate = useNavigate()
 
   return (
     <>
-      <h1 className="font-bacl text-blue-400 text-4xl">Nuevo Cliente</h1>
-      <p className="mt-3">Llena todos los campos para registrar un nuevo cliente</p>
+      <h1 className="font-bacl text-blue-400 text-4xl">Editar cliente {cliente.nombre}</h1>
+      <p className="mt-3">Cambia los campos que necesites</p>
 
       <div className="flex justify-end">
         <button className="bg-blue-800 text-white px-3 py-1 font-bold uppercase" onClick={() => navigate(-1)}>
@@ -35,12 +48,12 @@ export const NuevoCliente = () => {
         {errors && errors.map((item, i) => <Error key={i}>{item}</Error>)}
 
         <Form method="post" noValidate>
-          <Formulario />
+          <Formulario cliente={cliente} />
 
           <input
             type="submit"
             className="mt-5 w-full bg-blue-800 p-3 uppercase font-bold text-white text-lg"
-            value="Registar Cliente"
+            value="Guardar Cliente"
           />
         </Form>
       </div>

@@ -1,7 +1,7 @@
 import { Cliente } from '@/entities/Cliente'
 import axios from '@/network/axios'
 import { LoaderFunction, useLoaderData } from 'react-router-dom'
-import { ClientRow } from './ClientRow'
+import { ClientRow } from '../components/ClientRow'
 
 export const IndexLoader: LoaderFunction = async () => {
   const resp = await axios.get('/clients')
